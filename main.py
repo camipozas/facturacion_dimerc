@@ -6,14 +6,10 @@ from funciones import *
 
 fecha_inicio  = input("Fecha de inicio (DD.MM.AAAA): ")
 fecha_termino = "30.09.2021"
-directorio = "".join((fecha_inicio, "-", fecha_termino, "/"))
 
-try:
-	os.mkdir(directorio)
-except FileExistsError:
-	pass
+nombre_archivo = "".join((fecha_inicio, "-", fecha_termino, ".xlsx"))
 
-dataframe = leer_archivo(directorio + "ORIGINAL.xlsx")
+dataframe = leer_archivo(nombre_archivo)
 
 textos = dataframe["Texto"]
 dataframe["Categoría"] = textos.apply(detectar_categoria)
@@ -50,6 +46,13 @@ print(con_otros_numeros)
 print("\n\nSIN NÚMERO\n")
 print(sin_numero)
 """
+
+directorio = "".join((fecha_inicio, "-", fecha_termino, "/"))
+
+try:
+	os.mkdir(directorio)
+except FileExistsError:
+	pass
 
 for df, nombre in ((dataframe, "NUEVO"), (con_rut, "RUT"), (con_n_factura, "N_FACTURA"), (con_otros_numeros, "OTROS_N"), (sin_numero, "SIN_N")):
 	escribir_archivo(df, directorio + nombre + ".xlsx")
