@@ -76,12 +76,12 @@ def detectar_n_factura(texto):
     c_factura = re.search(r"\bF(A(CT(URA(S)?)?)?)?.*\d+", texto)
     if c_factura:
         numero = re.search(r"\d+", c_factura.group())
-        return numero.group()
+        return numero.group().lstrip("0")
     else:
         patron_factura = r"(?<!\d)0*[1-9]\d{6}(?!\d)"
         coincidencia = re.search(patron_factura, texto)
         if coincidencia:
-            return coincidencia.group()
+            return coincidencia.group().lstrip("0")
         
     return np.nan
 
@@ -93,7 +93,7 @@ def detectar_numeros(texto):
     
     numero = re.search(r"\d+", texto)
     if numero:
-        return numero.group()
+        return numero.group().lstrip("0")
     return np.nan
     
 def leer_archivo(ruta):
