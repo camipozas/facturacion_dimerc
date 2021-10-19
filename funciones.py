@@ -96,34 +96,32 @@ def detectar_numeros(texto):
         return numero.group().lstrip("0")
     return np.nan
     
-def leer_archivo(ruta):
+def leer_excel(ruta):
 	while True:
 		try:
 		    print("Leyendo archivo Excel:", ruta)
 		    dataframe = pd.read_excel(ruta)
 		    print("Archivo Excel leído.")
 		    break
+		except FileNotFoundError:
+                    print("Error: el archivo", ruta, "no existe")
+                    quit()
 		except PermissionError:
 		    print("Error: el archivo ya está abierto. Ciérralo y vuelve a intentarlo.")
 		    input("Presiona Enter cuando esté listo.")
-		except:
-			print("Ocurrió un error extraño")
-			return None
 		    
 	return dataframe
     
-def escribir_archivo(dataframe, ruta):
+def escribir_excel(dataframe, ruta):
 	while True:
 		try:
 		    print("Escribiendo nuevo archivo Excel:", ruta)
-		    dataframe.to_excel(ruta)
+		    dataframe.to_excel(ruta, index=False)
 		    print("Archivo Excel escrito.")
 		    break
 		except PermissionError:
 		    print("Error: el archivo ya está abierto. Ciérralo y vuelve a intentarlo.")
 		    input("Presiona Enter cuando esté listo.")
-		except:
-			print("Ocurrió un error extraño")
 
 """
 def detectar_n_factura_1(texto):
