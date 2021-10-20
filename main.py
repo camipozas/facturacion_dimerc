@@ -21,12 +21,12 @@ con_n_factura = FBL3N[pd.isna(FBL3N["RUT"]) & pd.notna(FBL3N["N° Factura"])]
 
 """
 try:
-	os.mkdir(ruta)
+	os.mkdir("FBL3N/")
 except FileExistsError:
 	pass
 
 for dataframe, nombre in ((FBL3N, "NUEVO"), (con_rut, "RUT"), (con_n_factura, "N_FACTURA"), (con_otros_numeros, "OTROS_N"), (sin_numero, "SIN_N")):
-	escribir_excel(dataframe, ruta + "/" + nombre + ".xlsx")
+	escribir_excel(dataframe, "FBL3N/" + nombre + ".xlsx")
 """
 
 

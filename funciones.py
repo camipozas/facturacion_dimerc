@@ -62,7 +62,7 @@ def detectar_rut(texto):
             patron_rut = secuencia + r"-?" + dv
 
         if re.search(patron_rut, texto):
-            return secuencia.replace(".", "") + dv
+            return secuencia.replace(".", "") + "-" + dv
         
     return np.nan
 
@@ -96,11 +96,11 @@ def detectar_numeros(texto):
         return numero.group().lstrip("0")
     return np.nan
     
-def leer_excel(ruta):
+def leer_excel(ruta, hoja=0):
 	while True:
 		try:
 		    print("Leyendo archivo Excel:", ruta)
-		    dataframe = pd.read_excel(ruta)
+		    dataframe = pd.read_excel(ruta, sheet_name=hoja)
 		    print("Archivo Excel leído.")
 		    break
 		except FileNotFoundError:
