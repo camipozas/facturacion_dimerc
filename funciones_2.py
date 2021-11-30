@@ -39,6 +39,7 @@ def limites(arr):
     
     return np.where(np.append([""], arr) != np.append(arr, [""]))[0]
 
+
 def separar_partidas_solas(DA, DB):
     idsA = DA["ORD"]["ID"]
     idsB = DB["ORD"]["ID"]
@@ -96,6 +97,7 @@ def extraer_datos(FBL3N, FBL5N):
         
     return D
 
+
 def match_1_1(D):
     for ID in D["ORD"].copy():
         datos = D["ORD"][ID]
@@ -134,8 +136,8 @@ def match_1_1(D):
                 if i3.size < datos["doc3"].size:
                     if ID in D["SOL"][3]:     
                         D["SOL"][3][ID] = {
-                            "doc3": np.concatenate(D["SOL"][3][ID]["doc3"], datos["doc3"][ni3]),
-                            "mon3": np.concatenate(D["SOL"][3][ID]["mon3"], datos["mon3"][ni3]),
+                            "doc3": np.concatenate((D["SOL"][3][ID]["doc3"], datos["doc3"][ni3])),
+                            "mon3": np.concatenate((D["SOL"][3][ID]["mon3"], datos["mon3"][ni3])),
                         }
                     else:
                         D["SOL"][3][ID] = {
@@ -147,9 +149,9 @@ def match_1_1(D):
                 elif i5.size < datos["doc5"].size:
                     if ID in D["SOL"][5]:     
                         D["SOL"][5][ID] = {
-                            "doc5": np.concatenate(D["SOL"][5][ID]["doc5"], datos["doc5"][ni5]),
-                            "mon5": np.concatenate(D["SOL"][5][ID]["mon5"], datos["mon5"][ni5]),
-                            "dem5": np.concatenate(D["SOL"][5][ID]["dem5"], datos["dem5"][ni5]),
+                            "doc5": np.concatenate((D["SOL"][5][ID]["doc5"], datos["doc5"][ni5])),
+                            "mon5": np.concatenate((D["SOL"][5][ID]["mon5"], datos["mon5"][ni5])),
+                            "dem5": np.concatenate((D["SOL"][5][ID]["dem5"], datos["dem5"][ni5])),
                             
                         }
                     else:
@@ -158,9 +160,7 @@ def match_1_1(D):
                             "mon5": datos["mon5"][ni5],
                             "dem5": datos["dem5"][ni5],
                         }
-
                 
-                    
                 D["ORD"].pop(ID)
             
 
@@ -188,8 +188,8 @@ def match_1_T(D):
             if i3.size < datos["doc3"].size:
                 if ID in D["SOL"][3]:     
                     D["SOL"][3][ID] = {
-                        "doc3": np.concatenate(D["SOL"][3][ID]["doc3"], datos["doc3"][ni3]),
-                        "mon3": np.concatenate(D["SOL"][3][ID]["mon3"], datos["mon3"][ni3]),
+                        "doc3": np.concatenate((D["SOL"][3][ID]["doc3"], datos["doc3"][ni3])),
+                        "mon3": np.concatenate((D["SOL"][3][ID]["mon3"], datos["mon3"][ni3])),
                     }
                 else:
                     D["SOL"][3][ID] = {
@@ -198,8 +198,6 @@ def match_1_T(D):
                     }
                 
             D["ORD"].pop(ID)
-
-
 
 
 def match_1_V(D):
@@ -241,8 +239,8 @@ def match_1_V(D):
                 if i3.size < datos["doc3"].size:
                     if ID in D["SOL"][3]:     
                         D["SOL"][3][ID] = {
-                            "doc3": np.concatenate(D["SOL"][3][ID]["doc3"], datos["doc3"][ni3]),
-                            "mon3": np.concatenate(D["SOL"][3][ID]["mon3"], datos["mon3"][ni3]),
+                            "doc3": np.concatenate((D["SOL"][3][ID]["doc3"], datos["doc3"][ni3])),
+                            "mon3": np.concatenate((D["SOL"][3][ID]["mon3"], datos["mon3"][ni3])),
                         }
                     else:
                         D["SOL"][3][ID] = {
@@ -254,9 +252,9 @@ def match_1_V(D):
                 elif datos["doc5"][~v].size > 0:
                     if ID in D["SOL"][5]:     
                         D["SOL"][5][ID] = {
-                            "doc5": np.concatenate(D["SOL"][5][ID]["doc5"], datos["doc5"][~v]),
-                            "mon5": np.concatenate(D["SOL"][5][ID]["mon5"], datos["mon5"][~v]),
-                            "dem5": np.concatenate(D["SOL"][5][ID]["dem5"], datos["dem5"][~v]),
+                            "doc5": np.concatenate((D["SOL"][5][ID]["doc5"], datos["doc5"][~v])),
+                            "mon5": np.concatenate((D["SOL"][5][ID]["mon5"], datos["mon5"][~v])),
+                            "dem5": np.concatenate((D["SOL"][5][ID]["dem5"], datos["dem5"][~v])),
                             
                         }
                     else:
@@ -265,116 +263,116 @@ def match_1_V(D):
                             "mon5": datos["mon5"][~v],
                             "dem5": datos["dem5"][~v],
                         }
-
-                
                     
                 D["ORD"].pop(ID)
 
-"""
+
 def match_1_M(D):
-    def sumas(arr):
-        sumas_arr = [it.combinations(arr, largo) for largo in range(2, len(arr) + 1)]
-        sumas_arr = it.chain.from_iterable(sumas_arr)
-        sumas_arr = it.islice(sumas_arr, 1000000)
-        sumas_arr = np.array(list(sumas_arr), dtype="object")
-        sumas_arr = sumas_arr.sum(axis=-1)
-        return sumas_arr
-        	
+    def comb(arr, N):
+        comb_arr = [it.combinations(arr, largo) for largo in range(2, N+1)]
+        comb_arr = it.chain.from_iterable(comb_arr)
+        comb_arr = it.islice(comb_arr, 100000)
+        return np.array(list(comb_arr), dtype="object")
         
-        if len(arr) > 15 or len(arr) == 1:
-            return []
-        	
-    	sumas_arr = [np.array(list(it.combinations(arr, largo))).sum(axis=-1)
-        for largo in range(2, len(arr) + 1)]
-            return np.concatenate(sumas_arr)
-	
+    for ID in D["ORD"].copy():
+        datos = D["ORD"][ID]
+        N = datos["doc5"].size
 
-    def combinaciones(arr):
-        combs_arr = [it.combinations(arr, largo) for largo in range(2, len(arr) + 1)]
-        combs_arr = it.chain.from_iterable(combs_arr)
-        combs_arr = it.islice(combs_arr, 16)
-        combs_arr = np.array(list(combs_arr), dtype="object")
-        return combs_arr
-        	
-        
-        if len(arr) > 15 or len(arr) == 1:
-            return []
-        
-        combs_arr = [list(it.combinations(arr, largo))
-        for largo in range(2, len(arr) + 1)]
-            print(combs_arr)
-            return np.concatenate(combs_arr)
-        
-        
-    ids3 = D3["ORD"]["ID"]
-    mon3 = D3["ORD"]["Monto"]
-    lim3 = limites(ids3)
+        range3 = np.arange(datos["doc3"].size)
+        comb_i5 = comb(np.arange(N), N)
+        comb_mon5 = comb(datos["mon5"], N)
+        suma_mon5 = [sum(tupla) for tupla in comb_mon5]
 
-    ids5 = D5["ORD"]["ID"]
-    mon5 = D5["ORD"]["Monto"]
-    lim5 = limites(ids5)
-    
-    n_ids = np.unique(ids3).size
-    
-    # Calcular sumas de cada combinación posible en cada grupo de montos en FBL5N
-    sum5 = [sumas(mon5[ lim5[i] : lim5[i+1] ]) for i in range(n_ids)]
-    lms5 = [0] + [len(sum5[i]) for i in range(len(sum5))]
-    sum5 = np.concatenate(sum5)
-    
-    ind5 = np.arange(ids5.size)
-    cmb5 = [combinaciones(ind5[ lim5[i] : lim5[i+1] ]) for i in range(n_ids)]
-    print(cmb5)
-    cmb5 = np.concatenate(cmb5)
-    
-    ##########
-    
-    # i3 es un arreglo booleano.
-    # Para cada elemento en D[3]["ORD"]["Monto"], es igual a True
-    # si es igual a la suma de todos los montos respectivos en sum5
-    i3 = [
-        np.isin(-mon3[ lim3[i] : lim3[i+1] ], sum5[ lms5[i] : lms5[i+1] ])
-        for i in range(n_ids)
-    ]
-    i3 = np.concatenate(i3)
-    print(i3)
-    
-    # Filtrar datos en D[3]
-    # Rellenar D[3]["1-1"] con los calces 1-1 encontrados
-    # Reemplazar D[3]["ORD"] con el resto de los datos
-    for clave in ("ID", "Documento", "Monto"):
-        D3["1-M"][clave] = D3["ORD"][clave][np.nonzero(i3)]
-        D3["ORD"][clave] = D3["ORD"][clave][np.nonzero(~i3)]
-    
-    ##########
-    
-    # i5 es un arreglo booleano.
-    # Para cada elemento en D[5]["ORD"]["Monto"], es igual a True
-    # si se encuentra en el grupo respectivo en D[3]["ORD"]["Monto"]
-    i5 = [
-        np.isin(sum5[ lms5[i] : lms5[i+1] ], -mon3[ lim3[i] : lim3[i+1] ])
-        for i in range(n_ids)
-    ]
-    i5 = np.concatenate(i5)
+        # i3 y ci5 todavía no están del todo "listos".
+        # Se debe filtrar después de esto
+        i3 = np.nonzero(np.isin(datos["mon3"], suma_mon5))[0]
+        ci5 = np.nonzero(np.isin(suma_mon5, datos["mon3"]))[0]
 
-    resultados_suma = sum5[i5]
-    resultados_comb = cmb5[i5]
+        # Filtrar en i3 y ci5
+        usados3 = []
+        usados5 = []
+        # Buscar entre todos los índices en suma_mon5 marcados
+        for i in ci5.copy():
+            # Si hay algún índice ocupado, descartar esta combinación
+            if np.isin(comb_i5[i], usados5).any():
+                pass
+            else:
+                j3 = (datos["mon3"] == suma_mon5[i]) & np.isin(range3, usados3, invert=True)
+                if range3[j3].size > 0:
+                    usados3.append(range3[j3][0])
+                    usados5.append(list(comb_i5[i]))
 
-    print(pd.DataFrame.from_dict({"IDs": resultados_comb, "Sumas": resultados_suma}))
-        
-    # Filtrar datos en D[5]
-    # Rellenar D[5]["1-1"] con los calces 1-1 encontrados
-    # Reemplazar D[5]["ORD"] con el resto de los datos
-    for clave in ("ID", "Documento", "Monto", "Demora"):
-        D5["1-M"][clave] = D5["ORD"][clave][np.nonzero(i5)]
-        D5["ORD"][clave] = D5["ORD"][clave][np.nonzero(~i5)]
-    
-    ##########
-    
-    # Separar aquellas partidas que ya no pueden hacer match debido a que
-    # ya no hay partidas con el mismo ID en la otra tabla
-    separar_partidas_solas(D3, D5)
-    separar_partidas_solas(D3, D5)
-"""
+        i3 = usados3
+        i5 = usados5
+
+        # Si hay un match, guardarlo en D["1-M"].
+        # Los datos restantes se irán a D["SOL"]
+        if len(i3) > 0:
+            D["1-M"][ID] = [
+                {
+                    "doc3": datos["doc3"][[i3[i]]],
+                    "mon3": datos["mon3"][[i3[i]]],
+                    "doc5": datos["doc5"][ i5[i] ],
+                    "mon5": datos["mon5"][ i5[i] ],
+                    "dem5": datos["dem5"][ i5[i] ],
+                }
+                for i in range(len(i3))
+            ]
+
+            # Obtener complementos de i3 e i5
+            
+            ni3 = np.ones_like(datos["doc3"], dtype=bool)
+            ni3[i3] = False
+
+            i5 = [item for sublista in i5 for item in sublista]
+            ni5 = np.ones_like(datos["doc5"], dtype=bool)
+            ni5[i5] = False
+
+            # Si todavía sobran datos, guardar los restantes en D["ORD"],
+            # sobreescribiendo lo que había ahí
+            if datos["doc3"][ni3].size > 0 and datos["doc5"][ni5].size > 0:
+                D["ORD"][ID] = {
+                    "doc3": datos["doc3"][ni3],
+                    "mon3": datos["mon3"][ni3],
+                    "doc5": datos["doc5"][ni5],
+                    "mon5": datos["mon5"][ni5],
+                    "dem5": datos["dem5"][ni5],
+                }
+
+            # En cambio, si se acabaron todas las partidas en FBL3N o FBL5N,
+            # eliminar D["ORD"][ID]
+            else:
+                # Si hay partidas solas en FBL3N, guardarlas acá
+                if datos["doc3"][ni3].size > 0:
+                    if ID in D["SOL"][3]:     
+                        D["SOL"][3][ID] = {
+                            "doc3": np.concatenate((D["SOL"][3][ID]["doc3"], datos["doc3"][ni3])),
+                            "mon3": np.concatenate((D["SOL"][3][ID]["mon3"], datos["mon3"][ni3])),
+                        }
+                    else:
+                        D["SOL"][3][ID] = {
+                            "doc3": datos["doc3"][ni3],
+                            "mon3": datos["mon3"][ni3],
+                        }
+
+                # Si hay partidas solas en FBL5N, guardarlas acá
+                elif datos["doc5"][ni5].size > 0:
+                    if ID in D["SOL"][5]:     
+                        D["SOL"][5][ID] = {
+                            "doc5": np.concatenate((D["SOL"][5][ID]["doc5"], datos["doc5"][ni5])),
+                            "mon5": np.concatenate((D["SOL"][5][ID]["mon5"], datos["mon5"][ni5])),
+                            "dem5": np.concatenate((D["SOL"][5][ID]["dem5"], datos["dem5"][ni5])),
+                            
+                        }
+                    else:
+                        D["SOL"][5][ID] = {
+                            "doc5": datos["doc5"][ni5],
+                            "mon5": datos["mon5"][ni5],
+                            "dem5": datos["dem5"][ni5],
+                        }
+                
+                D["ORD"].pop(ID)
+
 
 def calzar(FBL3N, FBL5N):
     D = extraer_datos(FBL3N, FBL5N)
@@ -385,7 +383,7 @@ def calzar(FBL3N, FBL5N):
     print(len(D["ORD"]))
     match_1_V(D)
     print(len(D["ORD"]))
-    #match_1_M(D)
+    match_1_M(D)
     print(len(D["ORD"]))
     
     return D
