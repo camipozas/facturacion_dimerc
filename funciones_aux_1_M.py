@@ -14,12 +14,32 @@ def choose(n, k):
 def suma(arr, largo):
     for tupla in it.combinations(arr, largo):
         yield sum(tupla)
+
+def comb(arr):
+    MAX = 1000000
     
-def comb(arr, N):
-    comb_arr = [suma(arr, largo) for largo in range(2, N+1)]
-    comb_arr = it.chain.from_iterable(comb_arr)
-    comb_arr = it.islice(comb_arr, 100000)
-    return np.fromiter(comb_arr, np.int32)
+    largo = arr.size
+    if 2**largo - largo - 1 > MAX:
+        resultado = np.empty(MAX, dtype=np.int32)
+    else:
+        resultado = np.empty(2**largo - largo - 1, dtype=np.int32)
+        
+    inf = 0
+    sup = 0
+    for n in range(2, largo+1):
+        inf = sup
+        sup += choose(largo, n)
+        dt = np.dtype([('', arr.dtype)] * n)
+        if sup > MAX:
+            iterador = it.islice(it.combinations(arr, n), MAX - inf)
+            b = np.fromiter(iterador, dt)
+            resultado[inf:] = b.view(arr.dtype).reshape(-1, n).sum(axis=1)
+            return resultado
+        else:
+            b = np.fromiter(it.combinations(arr, n), dt)
+            resultado[inf:sup] = b.view(arr.dtype).reshape(-1, n).sum(axis=1)
+
+    return resultado
 
 def obtener_indices(i, largo):
     """
@@ -64,7 +84,7 @@ def obtener_indices(i, largo):
     indices = np.arange(n)
     for pos in range(n):
         while True:
-            # termino: igual al siguiente número combinatoriio: "cantidad
+            # termino: igual al siguiente número combinatorio: "cantidad
             # de números del 0 al 9 restantes" sobre "cantidad de posiciones
             # restantes".
 

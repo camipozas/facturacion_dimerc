@@ -492,38 +492,34 @@ def match_1_M_2(D):
         i3 = []
         i5 = []
 
-        range3 = np.arange(datos["ind3"].size, dtype=np.int32)
-        range5 = np.arange(datos["ind5"].size, dtype=np.int32)
+        range3 = np.arange(datos["mon3"].size, dtype=np.int32)
+        range5 = np.arange(datos["mon5"].size, dtype=np.int32)
 
-        largo = range5.size
+        largo = datos["mon5"].size
         
-        suma_mon5 = comb(datos["mon5"], largo)
+        suma_mon5 = comb(datos["mon5"])
 
-        # i3 y ci5 todavía no están del todo "listos".
-        # Se debe filtrar después de esto
-        i3 = np.nonzero(np.isin(datos["mon3"], suma_mon5))[0]
-        ci5 = np.nonzero(np.isin(suma_mon5, datos["mon3"]))[0]
+        # Obtener índices de suma_mon5 donde su elemento esté en
+        # datos["mon3"], y guardarlos en si5
+        si5 = np.nonzero(np.isin(suma_mon5, datos["mon3"]))[0]
 
-        # Filtrar en i3 y ci5
-        usados3 = []
-        usados5 = []
-        usados5_flat = []
+        i3 = []
+        i5 = []
+        i5_flat = []
+        
         # Buscar entre todos los índices en suma_mon5 marcados
-        for i in ci5.copy():
-            indices = obtener_indices(i, largo)
+        for i in si5.copy():
+            indices5 = obtener_indices(i, largo)
             # Si hay algún índice ocupado, descartar esta combinación
-            if np.isin(indices, usados5_flat).any():
+            if np.isin(indices5, i5_flat).any():
                 pass
             else:
-                j3 = (datos["mon3"] == suma_mon5[i]) & np.isin(range3, usados3, invert=True)
+                j3 = (datos["mon3"] == suma_mon5[i]) & np.isin(range3, i3, invert=True)
                 if range3[j3].size > 0:
-                    usados3.append(range3[j3][0])
-                    usados5.append(indices)
-                    for indice in indices:
-                        usados5_flat.append(indice)
-
-        i3 = usados3
-        i5 = usados5
+                    i3.append(range3[j3][0])
+                    i5.append(indices5)
+                    for indice in indices5:
+                        i5_flat.append(indice)
 
         # Si hay un match, guardarlo en D["1-M"].
         # Los datos restantes se irán a D["SOL"]
