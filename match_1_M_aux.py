@@ -11,18 +11,45 @@ def choose(n, k):
         resultado //= i
     return resultado
 
-def suma(arr, largo):
-    for tupla in it.combinations(arr, largo):
-        yield sum(tupla)
+
+def calcular_n_max(largo):
+    """
+    Calcula la cantidad máxima de elementos por combinación (n_max)
+    a realizar en un arreglo de largo "largo".
+
+    Si hay un arreglo con 800 elementos, no es posible realizar
+    todas las 2^800 combinaciones de esos elementos. Idealmente, se
+    deberían realizar menos de 100.000 combinaciones por arreglo para
+    evitar que el programa se demore demasiado tiempo en ejecutar.
+
+    Para un arreglo con 800 elementos, por ejemplo, no se deberían
+    realizar combinaciones de más de 2 elementos. En ese caso, el
+    valor retornado por esta función sería n_max = 2.
+
+    Pero para un arreglo con 15 elementos, es perfectamente viable
+    hacer las 2^15 combinaciones, así que n_max = 15.
+    """
+        
+    if largo <= 2:
+        return largo
+
+    n_max = 2
+    while n_max < largo:
+        if choose(largo, n_max) > 1000000:
+            return n_max - 1
+        n_max += 1
+
+    return n_max
+
 
 def comb(arr):
     MAX = 1000000
     
     largo = arr.size
     if 2**largo - largo - 1 > MAX:
-        resultado = np.empty(MAX, dtype=np.int32)
+        resultado = np.empty(MAX, dtype=arr.dtype)
     else:
-        resultado = np.empty(2**largo - largo - 1, dtype=np.int32)
+        resultado = np.empty(2**largo - largo - 1, dtype=arr.dtype)
         
     inf = 0
     sup = 0
@@ -41,7 +68,8 @@ def comb(arr):
 
     return resultado
 
-def indices_comb(largo, n, MAX=None):
+
+def indices_comb(largo, n):
     """
     Retorna un ndarray de índices para ordenar un arreglo de largo "largo"
     en combinaciones de n elementos.
@@ -57,31 +85,6 @@ def indices_comb(largo, n, MAX=None):
         indices[j] = np.add.accumulate(indices[j])
     return indices
 
-def comb2(arr):
-    MAX = 1000000
-    
-    largo = arr.size
-    if 2**largo - largo - 1 > MAX:
-        resultado = np.empty(MAX, dtype=np.int32)
-    else:
-        resultado = np.empty(2**largo - largo - 1, dtype=np.int32)
-        
-    inf = 0
-    sup = 0
-    for n in range(2, largo+1):
-        inf = sup
-        sup += choose(largo, n)
-        dt = np.dtype([('', arr.dtype)] * n)
-        if sup > MAX:
-            iterador = it.islice(it.combinations(arr, n), MAX - inf)
-            b = np.fromiter(iterador, dt)
-            resultado[inf:] = b.view(arr.dtype).reshape(-1, n).sum(axis=1)
-            return resultado
-        else:
-            b = np.fromiter(it.combinations(arr, n), dt)
-            resultado[inf:sup] = b.view(arr.dtype).reshape(-1, n).sum(axis=1)
-
-    return resultado
 
 def obtener_indices(i, largo):
     """

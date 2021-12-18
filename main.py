@@ -1,53 +1,101 @@
 import pandas as pd
-import numpy as np
-import re
-import os
-from funciones import *
+from func_rw import *
+from func_recon import *
+from func_match import *
+from func_f import *
 
-# PARTE 1
+""" MAIN """
 
-FBL3N = leer_excel("FBL3N.xlsx")
+print("1. Reconocimiento")
+print("2. Calces")
+print("3. Salir")
 
-textos = FBL3N["Texto"]
-FBL3N["Categoría"] = textos.apply(detectar_categoria)
-FBL3N["RUT"] = textos.apply(detectar_rut)
-FBL3N["N° Factura"] = textos.apply(detectar_n_factura)
-#FBL3N["Números"] = textos.apply(detectar_numeros)
-
-con_rut = FBL3N[pd.notna(FBL3N["RUT"])]
-con_n_factura = FBL3N[pd.isna(FBL3N["RUT"]) & pd.notna(FBL3N["N° Factura"])]
-#con_otros_numeros = FBL3N[pd.isna(FBL3N["RUT"]) & pd.isna(FBL3N["N° Factura"]) & pd.notna(FBL3N["Números"])]
-#sin_numero = FBL3N[pd.isna(FBL3N["RUT"]) & pd.isna(FBL3N["N° Factura"]) & pd.isna(FBl3N["Números"])]
-
-"""
-try:
-	os.mkdir("FBL3N/")
-except FileExistsError:
-	pass
-
-for dataframe, nombre in ((FBL3N, "NUEVO"), (con_rut, "RUT"), (con_n_factura, "N_FACTURA"), (con_otros_numeros, "OTROS_N"), (sin_numero, "SIN_N")):
-	escribir_excel(dataframe, "FBL3N/" + nombre + ".xlsx")
-"""
+opcion = input("Elija una opción [1, 2, 3]: ")
+while opcion not in ("1", "2", "3"):
+    opcion = input("Ingrese una opción válida [1, 2, 3]: ")
 
 
-# PARTE 2
 
-FBL5N = leer_excel("FBL5N.xlsx")
-FBL5N["Cuenta"] = FBL5N["Cuenta"].apply(lambda n: str(n).strip("0"))
+""" PARTE 1. RECONOCIMIENTO """
 
-# Calzar números de factura
+if opcion == "1":
+    # Leer archivos
+    sociedad = input("Ingrese la sociedad: ")
+    FBL3N = leer_excel("{} Bancos.xlsx".format(sociedad))
+    KNA1 = leer_excel("KNA1.xlsx")
 
-matches_factura = pd.merge(FBL5N, con_n_factura, left_on="Nｺ doc.", right_on="Nº documento")
-print(matches_factura)
-escribir_excel(matches_factura, "MATCHES.xlsx")
+    # Reconocer RUTs/RUCs (y luego IDs), y números de factura
+    print("Realizando reconocimiento de datos...")
+    ID_FBL3N, FACT_FBL3N = reconocer(FBL3N, KNA1)
+
+    # Liberar memoria
+    del FBL3N
+    del KNA1
+
+    # Solicitar escribir los archivos
+    print("Reconocimiento finalizado.")
+    opcion = input("¿Desea escribir los archivos? [S/N]: ")
+    while opcion not in ("S", "s", "N", "n"):
+        opcion = input("Ingrese una opción válida [S/N]: ")
+    if opcion in ("S", "s"):
+        nombre_id = "{} Bancos - IDs.xlsx".format(sociedad)
+        nombre_fact = "{} Bancos - Facturas.xlsx".format(sociedad)
+        escribir_excel(ID_FBL3N, nombre_id)
+        escribir_excel(FACT_FBL3N, nombre_fact)
 
 
-# Calzar RUTs
-KNA1 = leer_excel("KNA1.xlsx")
-KNA1["Nº ident.fis.1"] = KNA1["Nº ident.fis.1"].apply(lambda s: str(s).replace("-", ""))
+    
+""" PARTE 2. CALCES """
 
-join = pd.merge(FBL5N, KNA1, left_on="Cuenta", right_on="Cliente")
-join = FBL5N.merge(KNA1, left_on="Cuenta", right_on="Cliente", how='left')
-#join = pd.merge(join, con_rut, left_on="Nº ident.fis.1", right_on="RUT")
-escribir_excel(join, "Join.xlsx")
+if opcion == "2":
+    print("¿Qué archivos desea leer?")
+    print("1. IDs")
+    print("2. Facturas")
+    print("3. Ambos archivos")
 
+    opcion = input("Elija una opción [1, 2, 3]: ")
+    while opcion not in ("1", "2", "3"):
+        opcion = input("Ingrese una opción válida [1, 2, 3]: ")
+
+    sociedad = input("Ingrese la sociedad: ")
+
+    # Leer archivos
+    if opcion in ("1", "3"):
+        ID_FBL3N = leer_excel("{} Bancos - IDs.xlsx".format(sociedad))
+    if opcion in ("2", "3"):
+        FACT_FBL3N = leer_excel("{} Bancos - Facturas.xlsx".format(sociedad))
+        
+    FBL5N = leer_excel("{} PAs.xlsx".format(sociedad))
+
+    # Realizar calces por ID
+    if opcion in ("1", "3"):
+        MATCHES_ID = calzar_por_id(ID_FBL3N, FBL5N)
+
+        # Dar formato
+        MATCHES_ID_USUARIO = formatear_para_usuario_id(MATCHES_ID)
+        MATCHES_ID_EXPORTAR = formatear_para_exportar(MATCHES_ID)
+
+        # Escribir archivos
+        nombre_usuario_id = "{} Resultados Usuario - IDs.xlsx".format(sociedad)
+        nombre_exportar_id = "{} Resultados Exportar - IDs.csv".format(sociedad)
+        escribir_excel(MATCHES_ID_USUARIO, nombre_usuario_id)
+        escribir_csv(MATCHES_ID_EXPORTAR, nombre_exportar_id)
+        
+    # Realizar calces por factura
+    if opcion in ("2", "3"):
+        MATCHES_FACT = calzar_por_factura(FACT_FBL3N, FBL5N)
+
+        # Dar formato
+        MATCHES_FACT_USUARIO = formatear_para_usuario_fact(MATCHES_FACT)
+        MATCHES_FACT_EXPORTAR = formatear_para_exportar(MATCHES_FACT)
+
+        # Escribir archivos
+        nombre_usuario_fact = "{} Resultados Usuario - Facturas.xlsx".format(sociedad)
+        nombre_exportar_fact = "{} Resultados Exportar - Facturas.csv".format(sociedad)
+        escribir_excel(MATCHES_FACT_USUARIO, nombre_usuario_fact)
+        escribir_csv(MATCHES_FACT_EXPORTAR, nombre_exportar_fact)
+
+
+
+if opcion == "3":
+    pass
