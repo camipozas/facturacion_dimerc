@@ -1,0 +1,12 @@
+Lógica de reconocimiento de RUT
+-------------------------------
+
+1. Buscar patrones de la forma XXXXXXX o X.XXX.XXX, que empiecen con
+   un dígito distinto de 0
+2. Si no hay resultados, buscar patrones de la forma XXXXXXXX o XX.XXX.XXX,
+   que empiecen con un dígito distinto de 0
+3. A partir de los resultados, calcular el dígito verificador
+4. Ver si, inmediatamente después del patrón encontrado en el texto, hay un
+   número, que puede o no estar separado por un guion, y ver si coincide
+   con el dígito verificador
+5. Si coincide, entonces se encontró un RUT
