@@ -21,7 +21,7 @@ while opcion not in ("1", "2", "3"):
 if opcion == "1":
     # Leer archivos
     sociedad = input("Ingrese la sociedad: ")
-    FBL3N = leer_excel("{} Bancos.xlsx".format(sociedad))
+    FBL3N = leer_FBL3N("{} Bancos.xlsx".format(sociedad))
     KNA1 = leer_excel("KNA1.xlsx")
 
     # Reconocer RUTs/RUCs (y luego IDs), y números de factura
@@ -61,11 +61,11 @@ if opcion == "2":
 
     # Leer archivos
     if opcion in ("1", "3"):
-        ID_FBL3N = leer_excel("{} Bancos - IDs.xlsx".format(sociedad))
+        ID_FBL3N = leer_FBL3N("{} Bancos - IDs.xlsx".format(sociedad))
     if opcion in ("2", "3"):
-        FACT_FBL3N = leer_excel("{} Bancos - Facturas.xlsx".format(sociedad))
+        FACT_FBL3N = leer_FBL3N("{} Bancos - Facturas.xlsx".format(sociedad))
         
-    FBL5N = leer_excel("{} PAs.xlsx".format(sociedad))
+    FBL5N = leer_FBL5N("{} PAs.xlsx".format(sociedad))
 
     # Realizar calces por ID
     if opcion in ("1", "3"):
