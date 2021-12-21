@@ -293,7 +293,7 @@ def match_1_M(D):
         i3 = []
         i5 = []
         ni3 = np.ones_like(datos["mon3"], dtype=bool)
-        ni5_flat = np.ones_like(datos["mon5"], dtype=bool)
+        i5_flat = np.zeros_like(datos["mon5"], dtype=bool)
 
         largo = range5.size
         
@@ -313,16 +313,12 @@ def match_1_M(D):
             # datos["mon3"]
             si5 = np.nonzero(np.isin(suma_mon5, datos["mon3"][ni3]))[0]
 
-            # Filtrar en i3 y si5
             # Buscar entre todos los índices en suma_mon5 marcados
             for i in si5:
-                # Obtener la combinación de índices en el arreglo original,
-                # datos["mon5"], que produciría la suma encontrada en
-                # el índice seleccionado actualmente, i
                 indices5 = indices[:, i].flatten()
                 
                 # Si hay algún índice ocupado, descartar esta combinación
-                if np.isin(indices5, np.nonzero(ni5_flat), invert=True).any():
+                if np.isin(indices5, np.nonzero(i5_flat)).any():
                     pass
                 
                 else:
@@ -331,7 +327,7 @@ def match_1_M(D):
                     # Es posible que este dato haya sido marcado en una
                     # iteración anterior, por eso se debe verificar
                     j3 = (datos["mon3"][ni3] == suma_mon5[i])
-                    if range3[ni3][j3].size > 0:
+                    if j3.any():
                         # Obtener el primer índice de entre los seleccionados
                         indice3 = range3[ni3][j3][0]
                         
@@ -339,12 +335,10 @@ def match_1_M(D):
                         i5.append(indices5)
                         
                         ni3[indice3] = False
-                        ni5_flat[indices5] = False
+                        i5_flat[indices5] = True
 
-                        largo = range5[ni5_flat].size
+                        #largo = range5[ni5_flat].size
                         #n_max = calcular_n_max(largo)
-
-                        break
 
             # Si todos los índices están ocupados (es decir, si todos los índices
             # en ni3 están marcados como False), terminar acá
@@ -355,107 +349,6 @@ def match_1_M(D):
             #largo = datos["mon5"][ni5_flat]
             n += 1
 
-
-        # Si hay un match, guardarlo en D["1-M"].
-        # Los datos restantes se irán a D["SOL"]
-        if len(i3) > 0:
-            D["1-M"][ID] = [
-                {
-                    "ind3": datos["ind3"][[i3[i]]],
-                    "ind5": datos["ind5"][ i5[i] ],
-                }
-                for i in range(len(i3))
-            ]
-
-            # Obtener complementos de i3 e i5
-            
-            ni3 = np.ones_like(datos["ind3"], dtype=bool)
-            ni3[i3] = False
-
-            i5 = [item for sublista in i5 for item in sublista]
-            ni5 = np.ones_like(datos["ind5"], dtype=bool)
-            ni5[i5] = False
-
-            # Si todavía sobran datos, guardar los restantes en D["ORD"],
-            # sobreescribiendo lo que había ahí
-            if datos["ind3"][ni3].size > 0 and datos["ind5"][ni5].size > 0:
-                D["ORD"][ID] = {
-                    "ind3": datos["ind3"][ni3],
-                    "mon3": datos["mon3"][ni3],
-                    "ind5": datos["ind5"][ni5],
-                    "mon5": datos["mon5"][ni5],
-                    "dem5": datos["dem5"][ni5],
-                }
-
-            # En cambio, si se acabaron todas las partidas en FBL3N o FBL5N,
-            # eliminar D["ORD"][ID]
-            else:
-                # Si hay partidas solas en FBL3N, guardarlas acá
-                if datos["ind3"][ni3].size > 0:
-                    if ID in D["SOL"][3]:     
-                        D["SOL"][3][ID] = np.append(D["SOL"][3][ID], datos["ind3"][ni3])
-                    else:
-                        D["SOL"][3][ID] = datos["ind3"][ni3]
-
-                # Si hay partidas solas en FBL5N, guardarlas acá
-                elif datos["ind5"][ni5].size > 0:
-                    if ID in D["SOL"][5]:     
-                        D["SOL"][5][ID] = np.append(D["SOL"][5][ID], datos["ind5"][ni5])
-                    else:
-                        D["SOL"][5][ID] = datos["ind5"][ni5]
-                
-                D["ORD"].pop(ID)
-
-
-def match_1_M_2(D):
-    """
-    NOTA IMPORTANTE
-    Esta función requiere varias funciones auxiliares contenidas en
-    funciones_aux_1_M.py
-
-    Funciones usadas directamente aquí:
-        comb
-        obtener_indices
-        
-    Funciones requeridas por las anteriores:
-        choose
-        suma
-    """
-    
-    for ID in D["ORD"].copy():
-        datos = D["ORD"][ID]
-
-        i3 = []
-        i5 = []
-
-        range3 = np.arange(datos["mon3"].size, dtype=np.int32)
-        range5 = np.arange(datos["mon5"].size, dtype=np.int32)
-
-        largo = datos["mon5"].size
-        
-        suma_mon5 = comb(datos["mon5"])
-
-        # Obtener índices de suma_mon5 donde su elemento esté en
-        # datos["mon3"], y guardarlos en si5
-        si5 = np.nonzero(np.isin(suma_mon5, datos["mon3"]))[0]
-
-        i3 = []
-        i5 = []
-        i5_flat = []
-        
-        # Buscar entre todos los índices en suma_mon5 marcados
-        for i in si5.copy():
-            indices5 = obtener_indices(i, largo)
-            # Si hay algún índice ocupado, descartar esta combinación
-            if np.isin(indices5, i5_flat).any():
-                pass
-            else:
-                j3 = (datos["mon3"] == suma_mon5[i]) & np.isin(range3, i3, invert=True)
-                if range3[j3].size > 0:
-                    i3.append(range3[j3][0])
-                    i5.append(indices5)
-                    for indice in indices5:
-                        i5_flat.append(indice)
 
         # Si hay un match, guardarlo en D["1-M"].
         # Los datos restantes se irán a D["SOL"]
