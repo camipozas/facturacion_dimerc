@@ -1,4 +1,6 @@
 import pandas as pd
+import re
+from datetime import date, datetime
 from func_rw import *
 from func_recon import *
 from func_match import *
@@ -59,15 +61,36 @@ if opcion == "2":
 
     sociedad = input("Ingrese la sociedad: ")
 
+    # Pedir fecha de contabilización
+    fecha_cont = input("Ingrese fecha de contabilización (DD.MM.AAAA): ")
+    
+    # Validar que la fecha esté en el formato indicado y no sea una fecha futura
+    hoy = date.today()
+    flag_1, flag_2 = False, False
+    while not flag_1 or not flag_2:
+        flag_1 = re.fullmatch(r"\d\d\.\d\d\.\d\d\d\d", fecha_cont)
+        if not flag_1:
+            fecha_cont = input("La fecha debe ser en el formato (DD.MM.AAAA): ")
+        else:
+            flag_2 = (datetime.strptime(fecha_cont, "%d.%m.%Y").date() <= hoy)
+            if not flag_2:
+                fecha_cont = input("Debe ingresar una fecha no futura (DD.MM.AAAA): ")
+
     # Leer archivos
     if opcion in ("1", "3"):
         ID_FBL3N = leer_FBL3N("{} Bancos - IDs.xlsx".format(sociedad))
+        ID_FBL3N["Fecha nueva cont."] = fecha_cont
     if opcion in ("2", "3"):
         FACT_FBL3N = leer_FBL3N("{} Bancos - Facturas.xlsx".format(sociedad))
+        FACT_FBL3N["Fecha nueva cont."] = fecha_cont
         
     FBL5N = leer_FBL5N("{} PAs.xlsx".format(sociedad))
 
     # Realizar calces por ID
+    """
+    TODO:
+    Si FBL3N es vacía, va a haber error
+    """
     if opcion in ("1", "3"):
         MATCHES_ID = calzar_por_id(ID_FBL3N, FBL5N)
 

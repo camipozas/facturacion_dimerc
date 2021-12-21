@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from datetime import date
+from datetime import date, datetime
 
 def formatear_para_usuario_fact(tabla):
     cambios_nombres = {
@@ -13,6 +13,7 @@ def formatear_para_usuario_fact(tabla):
         "Referencia PA": "Referencia",
         "Importe en moneda doc. PA": "Importe en moneda doc.",
         "Moneda del documento PA": "Moneda del documento",
+        "Fecha nueva cont. BANCO": "Fecha contabilización",
     }
     
     columnas = [
@@ -78,14 +79,14 @@ def formatear_para_usuario_id(tabla):
 def formatear_para_exportar(tabla):
     cambios_nombres = {
         "Correlativo": "CORR",
+        "Fecha nueva cont. BANCO": "BUDAT",
         "Fecha valor BANCO": "VALUT",
-        "Clase de documento BANCO": "BLART",
         "Sociedad PA": "BUKRS",
         "Moneda local BANCO": "WAERS",
-        "Texto BANCO": "BKTXT",
         "Cuenta de mayor BANCO": "KONTO",
         "Importe en moneda local BANCO": "WRBTR",
         "Cuenta PA": "AGKON",
+        "Texto BANCO": "SGTXT",
         "Nº documento PA": "BELNR",
     }
 
@@ -102,8 +103,10 @@ def formatear_para_exportar(tabla):
         "KONTO",
         "WRBTR",
         "AGKON",
-        "CME",
+        "AGUMS",
         "KOART",
+        "AUGTX",
+        "SGTXT",
         "BELNR",
     ]
                            
@@ -111,23 +114,36 @@ def formatear_para_exportar(tabla):
         return pd.DataFrame(columns=columnas)
     
     tabla = tabla.copy()
-    
-    # Fecha de hoy, como un string en formato DD.MM.AAAA
-    fecha = date.today().strftime("%d.%m.%Y")
 
     # Agregar algunas columnas
-    tabla["BLDAT"] = fecha
-    tabla["BUDAT"] = fecha
+    tabla["BLART"] = "DZ"
+    
+    string = input("XBLNR (referencia): ")
+    while len(string) > 16:
+        string = input("Debe ingresar un string de no más de 16 caracteres de largo: ")
+    tabla["XBLNR"] = string
 
-    tabla["XBLNR"] = "INSERTAR"
-    tabla["CME"] = np.nan
+    string = input("BKTXT (texto): ")
+    while len(string) > 10:
+        string = input("Debe ingresar un string de no más de 10 caracteres de largo: ")
+    tabla["BKTXT"] = string
+    
+    tabla["AGUMS"] = ""
     tabla["KOART"] = "D"
+
+    string = input("AUGTX (texto): ")
+    while len(string) > 18:
+        string = input("Debe ingresar un string de no más de 18 caracteres de largo: ")
+    tabla["AUGTX"] = string
 
     # Renombrar columnas   
     tabla = tabla.rename(columns=cambios_nombres)
 
     # Cambiar el formato de la fecha de valor
     tabla["VALUT"] = tabla["VALUT"].dt.strftime("%d.%m.%Y")
+
+    # Agregar una fecha
+    tabla["BLDAT"] = tabla["BUDAT"]
 
     # Sacar valor absoluto de los montos
     tabla["WRBTR"] = tabla["WRBTR"].abs()

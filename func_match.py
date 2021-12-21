@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from datetime import date, datetime
 from match_1_M_aux import *
 
 def limites(arr):
@@ -43,6 +44,14 @@ def limites(arr):
 def extraer_datos(FBL3N, FBL5N):
     # Obtener ndarrays (arreglos de NumPy) importantes
     # a partir de FBL3N y FBL5N
+
+
+    # FIltrar solo aquellas partidas cuyas fechas sean <= a fecha_cont
+    FBL3N = FBL3N[
+        pd.to_datetime(FBL3N["Fecha valor"], "%d.%m.%Y")
+        <= datetime.strptime(FBL3N["Fecha nueva cont."][0], "%d.%m.%Y")
+    ]
+    
     ind3 = np.arange(len(FBL3N.index))
     ids3 = FBL3N["Cliente"].to_numpy()
     mon3 = -FBL3N["Importe en moneda local"].to_numpy()
@@ -242,14 +251,9 @@ def match_1_V(D):
 def match_1_M(D):
     """
     NOTA IMPORTANTE
-    Esta función requiere varias funciones auxiliares contenidas en
-    funciones_aux_1_M.py
-
-    Funciones usadas directamente aquí:
+    Esta función requiere las siguientes funciones auxiliares contenidas en
+    funciones_aux_1_M.py:
         indices_comb
-        calcular_n_max
-        
-    Funciones requeridas por las anteriores:
         choose
     """
 
@@ -506,8 +510,16 @@ def calzar_por_id(FBL3N, FBL5N):
 
 def calzar_por_factura(FBL3N, FBL5N):
     print("Realizando calce...")
+
+    # Filtrar por fecha
+    FBL3N = FBL3N[
+        pd.to_datetime(FBL3N["Fecha valor"], "%d.%m.%Y")
+        <= datetime.strptime(FBL3N["Fecha nueva cont."][0], "%d.%m.%Y")
+    ]
+    
     FBL3N["Nº factura"] = FBL3N["Nº factura"].astype(str)
     FBL5N["Referencia"] = FBL5N["Referencia"].astype(str)
+
     df = pd.merge(
         FBL3N.add_suffix(" BANCO"), FBL5N.add_suffix(" PA"),
         left_on="Nº factura BANCO", right_on="Referencia PA"
