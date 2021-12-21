@@ -252,6 +252,14 @@ def match_1_M(D):
     Funciones requeridas por las anteriores:
         choose
     """
+
+    """
+    INDICES_20 = {}
+    for largo in range(2, 21):
+        INDICES_20[largo] = {}
+        for n in range(2, largo+1):
+            INDICES_20[largo][n] = indices_comb(largo, n)
+    """
         
     for ID in D["ORD"].copy():
         datos = D["ORD"][ID]
@@ -290,12 +298,15 @@ def match_1_M(D):
         largo = range5.size
         
         n = 2
-        n_max = calcular_n_max(largo)
-        while n <= n_max:
+        n_combs_restantes = 1000000
+        while n <= largo and n_combs_restantes > 0:
             # Obtener arreglo de todas las combinaciones de n elementos
             # de datos["mon5"] que no estén siendo usados actualmente
-            indices = indices_comb(largo, n)
-            suma_mon5 = datos["mon5"][ni5_flat][indices].sum(axis=0)
+            if False: #largo <= 20:
+                indices = INDICES_20[largo][n]
+            else:
+                indices = indices_comb(largo, n, n_combs_restantes)
+            suma_mon5 = datos["mon5"][indices].sum(axis=0)
 
             # Obtener índices en el arreglo de sumas donde sus elementos
             # estén contenidos entre los elementos no seleccionados de
@@ -331,7 +342,7 @@ def match_1_M(D):
                         ni5_flat[indices5] = False
 
                         largo = range5[ni5_flat].size
-                        n_max = calcular_n_max(largo)
+                        #n_max = calcular_n_max(largo)
 
                         break
 
@@ -340,6 +351,8 @@ def match_1_M(D):
             if not ni3.any():
                 break
 
+            n_combs_restantes -= choose(largo, n)
+            #largo = datos["mon5"][ni5_flat]
             n += 1
 
 
@@ -593,7 +606,7 @@ def calzar_por_id(FBL3N, FBL5N):
     match_1_1(D)
     match_1_T(D)
     match_1_V(D)
-    match_1_M_2(D)
+    match_1_M(D)
     df = organizar_en_tabla(D, FBL3N, FBL5N)
     
     return df

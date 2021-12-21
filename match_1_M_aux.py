@@ -69,7 +69,7 @@ def comb(arr):
     return resultado
 
 
-def indices_comb(largo, n):
+def indices_comb(largo, n, MAX=None):
     """
     Retorna un ndarray de índices para ordenar un arreglo de largo "largo"
     en combinaciones de n elementos.
@@ -78,11 +78,26 @@ def indices_comb(largo, n):
     indices[0] = np.arange(largo-n+1)
     for j in range(1, n):
         reps = (largo-n+j) - indices[j-1]
-        indices = np.repeat(indices, reps, axis=1)
         ind = np.add.accumulate(reps)
-        indices[j, ind[:-1]] = 1-reps[1:]
-        indices[j, 0] = j
-        indices[j] = np.add.accumulate(indices[j])
+        if type(MAX) == int and ind[-1] > MAX:
+            sup = np.nonzero(ind >= MAX)[0][0]
+            reps2 = reps.copy()
+            
+            if sup - 1 >= 0:
+                reps[sup] = MAX - ind[sup-1]
+            else:
+                reps[sup] = MAX
+            
+            indices = np.repeat(indices[:, :sup+1], reps[:sup+1], axis=1)
+            indices[j, ind[:sup]] = 1-reps2[1:sup+1]
+            indices[j, 0] = j
+            indices[j] = np.add.accumulate(indices[j])
+            
+        else:
+            indices = np.repeat(indices, reps, axis=1)
+            indices[j, ind[:-1]] = 1-reps[1:]
+            indices[j, 0] = j
+            indices[j] = np.add.accumulate(indices[j])
     return indices
 
 
