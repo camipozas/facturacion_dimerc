@@ -1,0 +1,4 @@
+- El 65.3% de los arreglos tiene un tamaño menor a 10
+- El 82.3% de los arreglos tiene un tamaño menor a 20
+- El 93.4% de los arreglos tiene un tamaño menor a 50
+- El 97.3% de los arreglos tiene un tamaño menor a 100
