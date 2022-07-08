@@ -56,15 +56,4 @@ def bci(dimerc_banco, descripcion_bci):
     condicion3 = ~DF['Importe en moneda doc.'].isin(importes_problematicos)
     tabla.index = DF[condicion1 & condicion2 & condicion3].index
     DF.loc[condicion1 & condicion2 & condicion3] = tabla
-    df_output = DF.to_excel(f"{output_dir}/2000 Bancos.xlsx", index=False)
-
-
-'''def correr():
-    limpiar_output(output_dir)
-    dimerc = pd.read_excel(f'{input_dir}/2000 Bancos 1.XLSX')
-    descripcion_bci = pd.read_excel(
-        f'{input_dir}/Descripcion BCI.xlsx').drop(0)
-    bci(dimerc, descripcion_bci)
-
-
-hola = correr()'''
+    DF.to_excel(f"{output_dir}/2000 Bancos.xlsx", index=False)
