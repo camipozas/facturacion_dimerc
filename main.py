@@ -1,10 +1,12 @@
-import pandas as pd
+import pandas as pd 
 import re
 from datetime import date, datetime
 from func_rw import *
 from func_recon import *
 from func_match import *
 from func_f import *
+import codigo_BCI 
+
 
 """ MAIN """
 
