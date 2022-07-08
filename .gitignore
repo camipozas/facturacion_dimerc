@@ -153,5 +153,7 @@ cython_debug/
 
 # Excel
 *.xlsx
+*.XLSX
+*.csv
 
 .vscode
