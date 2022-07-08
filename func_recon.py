@@ -4,15 +4,16 @@ import re
 
 """ RECONOCER RUT O RUC """
 
+
 def detectar_rut(texto):
     if type(texto) != str:
         return np.nan
-    
+
     def digito_verificador(secuencia):
         secuencia = secuencia.replace(".", "")
         suma = 0
         for i in range(len(secuencia)):
-            factor = i%6 + 2
+            factor = i % 6 + 2
             indice = -i - 1
             suma += int(secuencia[indice]) * factor
 
@@ -30,7 +31,7 @@ def detectar_rut(texto):
     patron_pre_rut_7 = r"[1-9]\d{6}|[1-9]\.\d{3}\.\d{3}"
 
     # Primero buscar posibles patrones de 8 dígitos
-    coincidencias  = re.findall(patron_pre_rut_8, texto)
+    coincidencias = re.findall(patron_pre_rut_8, texto)
     # Luego, buscar posibles patrones de 7 dígitos POR SEPARADO,
     # y juntar los nuevos resultados con los anteriores
     coincidencias += re.findall(patron_pre_rut_7, texto)
@@ -47,7 +48,7 @@ def detectar_rut(texto):
         # Si coincide el DV, retornar el RUT sin puntos y con guion
         if re.search(patron_rut, texto):
             return secuencia.replace(".", "") + "-" + dv
-        
+
     return np.nan
 
 
@@ -59,16 +60,16 @@ def detectar_ruc(texto):
 
     # Detectar secuencias de 11 dígitos, donde el primer dígito es 1 o 2,
     # y el segundo es 0
-    
-    coincidencias  = re.search(r"[12]0\d{9}", texto)
+
+    coincidencias = re.search(r"[12]0\d{9}", texto)
     if coincidencias:
         return coincidencias.group()
-        
+
     return np.nan
 
 
-
 """ RECONOCER NÚMERO DE FACTURA """
+
 
 def detectar_n_factura(texto):
     if type(texto) == int and texto // 1000000 in range(1, 10):
@@ -86,12 +87,12 @@ def detectar_n_factura(texto):
         coincidencia = re.search(patron_factura, texto)
         if coincidencia:
             return coincidencia.group().lstrip("0")
-        
+
     return np.nan
 
 
-
 """ FUNCIÓN PRINCIPAL """
+
 
 def reconocer(FBL3N, KNA1):
     # Obtener columnas a trabajar
@@ -100,16 +101,16 @@ def reconocer(FBL3N, KNA1):
 
     columnas_KNA1 = KNA1.columns
     ID = columnas_KNA1[6]
-    
+
     # Filtrar solo CTs
     FBL3N = FBL3N[FBL3N[clase] == "CT"].copy()
 
     if len(FBL3N) == 0:
         print("Error: no hay documentos de clase CT en el archivo.")
         raise Exception
-    
+
     # Reconocer RUT o RUC según corresponda
-    moneda_local = FBL3N[moneda][0]
+    moneda_local = FBL3N[moneda].iloc[0]
     textos = FBL3N[texto]
     if moneda_local == "CLP":
         FBL3N["DNI"] = textos.apply(detectar_rut)
@@ -118,7 +119,7 @@ def reconocer(FBL3N, KNA1):
     else:
         print("Moneda local no reconocida")
         raise Exception
-    
+
     # Filtrar datos en KNA1, eliminando aquellos sin ID
     KNA1.dropna(subset=[ID], inplace=True)
 
@@ -147,13 +148,13 @@ def reconocer(FBL3N, KNA1):
     # Seleccionar solo las columnas necesarias
     ID_FBL3N = ID_FBL3N[
         np.concatenate([columnas_FBL3N, ["DNI"], columnas_KNA1])
-        ].copy()
+    ].copy()
     FACT_FBL3N = FACT_FBL3N[
         np.concatenate([columnas_FBL3N, ["Nº factura"]])
-        ].copy()
+    ].copy()
 
     # Resetear el índice
     ID_FBL3N.reset_index(drop=True, inplace=True)
     FACT_FBL3N.reset_index(drop=True, inplace=True)
-    
+
     return ID_FBL3N, FACT_FBL3N
