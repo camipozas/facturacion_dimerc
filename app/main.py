@@ -8,7 +8,6 @@ from func_recon import *
 from func_match import *
 from func_f import *
 from codigo_BCI import bci
-from clean_output import limpiar_output
 from params import input_dir, output_dir
 from add_date import get_today
 
@@ -27,9 +26,8 @@ def main():
     while opcion not in ("1", "2", "3"):
         opcion = input("Ingrese una opción válida [1, 2, 3]: ")
 
-    """ Parte 0. Completar descripción BCI y limpiar carpeta output"""
+    """ Parte 0. Completar descripción BCI"""
     if opcion != "3":
-        limpiar_output(output_dir)
         dimerc_bancos = pd.read_excel(
             f'{input_dir}/2000 Bancos 1.XLSX')  # Se asume que SIEMPRE va a tener el mismo nombre
         descripcion_bci = pd.read_excel(
