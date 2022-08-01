@@ -8,8 +8,8 @@ from func_recon import *
 from func_match import *
 from func_f import *
 from codigo_BCI import bci
-from clean_output import limpiar_output
 from params import input_dir, output_dir
+from add_date import get_today
 
 
 def main():
@@ -21,13 +21,13 @@ def main():
     print("3. Salir")
     print("")
 
+    fecha = get_today()
     opcion = input("Elija una opción [1, 2, 3]: ")
     while opcion not in ("1", "2", "3"):
         opcion = input("Ingrese una opción válida [1, 2, 3]: ")
 
-    """ Parte 0. Completar descripción BCI y limpiar carpeta output"""
+    """ Parte 0. Completar descripción BCI"""
     if opcion != "3":
-        limpiar_output(output_dir)
         dimerc_bancos = pd.read_excel(
             f'{input_dir}/2000 Bancos 1.XLSX')  # Se asume que SIEMPRE va a tener el mismo nombre
         descripcion_bci = pd.read_excel(
@@ -43,7 +43,7 @@ def main():
         print("")
         sociedad = input("Ingrese la sociedad: ")
         print("")
-        FBL3N = leer_FBL3N(f"{output_dir}/{sociedad} Bancos.xlsx".format(
+        FBL3N = leer_FBL3N(f"{output_dir}/{fecha}-{sociedad} Bancos.xlsx".format(
             sociedad))
         KNA1 = leer_excel(f"{input_dir}/KNA1.xlsx")
 
@@ -63,9 +63,9 @@ def main():
         while opcion not in ("S", "s", "N", "n"):
             opcion = input("Ingrese una opción válida [S/N]: ")
         if opcion in ("S", "s"):
-            nombre_id = f"{output_dir}/{sociedad} Bancos - IDs.xlsx".format(
+            nombre_id = f"{output_dir}/{fecha}-{sociedad} Bancos - IDs.xlsx".format(
                 sociedad)
-            nombre_fact = f"{output_dir}/{sociedad} Bancos - Facturas.xlsx".format(
+            nombre_fact = f"{output_dir}/{fecha}-{sociedad} Bancos - Facturas.xlsx".format(
                 sociedad)
             escribir_excel(ID_FBL3N, nombre_id)
             escribir_excel(FACT_FBL3N, nombre_fact)
@@ -124,10 +124,10 @@ def main():
         if not existe_FBL3N:
             if opcion in ("1", "3"):
                 ID_FBL3N = leer_FBL3N(
-                    f"{output_dir}/{sociedad} Bancos - IDs.xlsx".format(sociedad))
+                    f"{output_dir}/{fecha}-{sociedad} Bancos - IDs.xlsx".format(sociedad))
             if opcion in ("2", "3"):
                 FACT_FBL3N = leer_FBL3N(
-                    "f{output_dir}/{} Bancos - Facturas.xlsx".format(sociedad))
+                    "f{output_dir}/{fecha}-{} Bancos - Facturas.xlsx".format(sociedad))
 
         # Salieron mas arriba, viene del input
         FBL5N = leer_FBL5N(f"{input_dir}/{sociedad} PAs.XLSX".format(sociedad))
@@ -177,9 +177,9 @@ def main():
             MATCHES_ID_EXPORTAR = formatear_para_exportar_id(MATCHES_ID, datos)
             del MATCHES_ID
 
-            nombre_usuario_id = f"{output_dir}/{sociedad} Resultados Usuario - IDs.xlsx".format(
+            nombre_usuario_id = f"{output_dir}/{fecha}-{sociedad} Resultados Usuario - IDs.xlsx".format(
                 sociedad)
-            nombre_exportar_id = f"{output_dir}/{sociedad} Resultados Exportar - IDs.csv".format(
+            nombre_exportar_id = f"{output_dir}/{fecha}-{sociedad} Resultados Exportar - IDs.csv".format(
                 sociedad)
             escribir_excel(MATCHES_ID_USUARIO, nombre_usuario_id)
             escribir_csv(MATCHES_ID_EXPORTAR, nombre_exportar_id)
@@ -190,9 +190,9 @@ def main():
                 MATCHES_FACT, datos)
             del MATCHES_FACT
 
-            nombre_usuario_fact = f"{output_dir}/{sociedad} Resultados Usuario - Facturas.xlsx".format(
+            nombre_usuario_fact = f"{output_dir}/{fecha}-{sociedad} Resultados Usuario - Facturas.xlsx".format(
                 sociedad)
-            nombre_exportar_fact = f"{output_dir}/{sociedad} Resultados Exportar - Facturas.csv".format(
+            nombre_exportar_fact = f"{output_dir}/{fecha}-{sociedad} Resultados Exportar - Facturas.csv".format(
                 sociedad)
             escribir_excel(MATCHES_FACT_USUARIO, nombre_usuario_fact)
             escribir_csv(MATCHES_FACT_EXPORTAR, nombre_exportar_fact)

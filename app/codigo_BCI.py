@@ -2,6 +2,7 @@ import pandas as pd
 import warnings
 
 from params import output_dir
+from add_date import get_today
 
 
 def bci(dimerc_banco, descripcion_bci):
@@ -14,6 +15,7 @@ def bci(dimerc_banco, descripcion_bci):
     """
     warnings.filterwarnings('ignore')
     pd.set_option('display.float_format', lambda x: '%.3f' % x)
+    fecha = get_today()
 
     DF = dimerc_banco
     df_descripcion_bci = descripcion_bci
@@ -56,4 +58,4 @@ def bci(dimerc_banco, descripcion_bci):
     condicion3 = ~DF['Importe en moneda doc.'].isin(importes_problematicos)
     tabla.index = DF[condicion1 & condicion2 & condicion3].index
     DF.loc[condicion1 & condicion2 & condicion3] = tabla
-    DF.to_excel(f"{output_dir}/2000 Bancos.xlsx", index=False)
+    DF.to_excel(f"{output_dir}/{fecha}-2000 Bancos.xlsx", index=False)
