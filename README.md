@@ -1,46 +1,36 @@
-PLANIFICACIÓN
+# Match de abonos en SAP
 
-- SEMANA 1  (Lunes 27/09 – Viernes 01/10):
-	- Inicio del proyecto
-	- Reconocer RUTs en los textos
+### Español
+## Contexto
+Hay clientes que no suelen pagar la totalidad del monto sino que lo hacen por partes. Hasta antes de la solución esto se hacía uno a uno.
 
-- SEMANA 2  (Lunes 04/10 – Viernes 08/10):
-	- Reconocer números de factura en los textos
-	- Categorizar transacciones
-	- Mejorar reconocimientos anteriores
+## Solución
+Realizar una herramienta que permita reconocer y realizar calces de distintos documentos, relacionados a un número de factura. La descripción detallada del proceso se encuentra [aquí](Documentación/Facturación%20Dimerc.md). Además, se implementó una [lógica de reconocimiento de rut](Documentación/Lógica%20RUT.md).
+> Cabe destacar que esta solución es válida para todas las sociedades de un holding.
 
-- SEMANA 3  (Lunes 11/10 – Viernes 15/10):
-	- Plantear propuesta actual de manera presencial
-	- Mejorar el programa y corregir detalles en caso de existir
-	- La primera parte del proyecto debería estar terminada aquí
+Si bien, el código de por si era bueno. Se necesitaba pensar en la ejecución continua y en el usuario final, el cual no está acostumbrado/a a los códigos, así como también instalar dependencias. En primera instancia se pensó en utilizar [Docker](https://docs.docker.com/engine/install/) junto con Realpath: [Linux](https://zoomadmin.com/HowToInstall/UbuntuPackage/realpath) - [macOS](https://ports.macports.org/port/realpath/) para el manejo de archivos. Sin embargo, los usuarios ocupan Windows en el día a día, es por esto que se utilizó [autopy-py-to-exe](https://pypi.org/project/auto-py-to-exe/) el cual funciona de manera análoga a lo anteriormente mencionado. 
 
-- SEMANA 4 (Lunes 18/10 – Viernes 22/10):
-	- Empezar segunda parte del proyecto
-	- Obtener información sobre facturas y montos
-	- Comenzar con el calce de facturas y montos
-	- En esta semana, por lo menos implementar el calce uno-a-uno
+Dicho lo anterior, para su ejecución es necesario realizar lo siguiente:
+1. Tener una carpeta en donde se alojará el archivo `main.exe`
+2. Una vez en el directorio, crear la carpeta `input` y `output`, en `input` se agregan los archivos iniciales para su ejecución, cabe destacar que estos deben ser limpiados cada vez que es vaya a ejecutar. Por otro lado, en la carpeta `output` se guarda un histórico de archivos generados. No es necesario hacer cambios en esta última.
+3. Si no es la primera vez que ejecuta, no repetir pasos 1 y 2.
 
-- SEMANA 5  (Lunes 25/10 – Viernes 29/10):
-	- Avanzar con el calce de facturas y montos
-	- Implementar más tipos de calce, como el calce uno-a-muchos
+> Para mayor orden se recomienda una carpeta exclusiva donde se realizan los pasos anteriormente mencionados.
 
-- SEMANA 6  (Lunes 01/11 – Viernes 05/11):
-	- Buscar cómo hacer más eficiente el calce uno-a-muchos
+--------
+### English
+## Context
+There are clients who do not usually pay the entire amount but do so in parts. Until before the solution this was done one by one.
 
-- SEMANA 7  (Lunes 08/11 – Viernes 12/11):
-	- Buscar cómo hacer más eficiente el calce uno-a-muchos
+## Solution
+Create a tool that allows recognizing and matching different documents, related to an invoice number. The detailed description of the process can be found [here](Documentation/Billing%20Dimerc.md). In addition, a [route recognition logic](Documentation/Logic%20RUT.md) was implemented.
+> It should be noted that this solution is valid for all the companies of a holding company.
 
-- SEMANA 8  (Lunes 15/11 – Viernes 19/11):
-	- Agrupar eficientemente los datos para realizar calces
+Although, the code itself was good. It was necessary to think about continuous execution and the end user, who is not used to code, as well as installing dependencies. It was first thought to use [Docker](https://docs.docker.com/engine/install/) together with Realpath: [Linux](https://zoomadmin.com/HowToInstall/UbuntuPackage/realpath) - [ macOS](https://ports.macports.org/port/realpath/) for file handling. However, users occupy Windows on a daily basis, that is why [autopy-py-to-exe](https://pypi.org/project/auto-py-to-exe/) was used, which It works analogously to the above.
 
-- SEMANA 9  (Lunes 22/11 - Viernes 26/11):
-	- Realizar calces uno-a-todas y uno-a-vencidas
+That said, for its execution it is necessary to do the following:
+1. Have a folder where the `main.exe` file will be located
+2. Once in the directory, create the `input` and `output` folders, in `input` the initial files are added for its execution, it should be noted that these must be cleaned each time it is going to be executed. On the other hand, a history of generated files is saved in the `output` folder. It is not necessary to make changes to the latter.
+3. If it is not the first time you run, do not repeat steps 1 and 2.
 
-- SEMANA 10 (Lunes 29/11 - Viernes 03/12):
-	- Implementar calce uno-a-muchos
-	- Mejorar eficiencia de todos los calces
-	- Dar formato a los datos presentados
-	- Limpiar código
-
-- SEMANA 11 (Lunes 06/12 - Viernes 10/12):
-	- Presentar propuesta final (?)
+> For greater order, an exclusive folder is recommended where the aforementioned steps are carried out.
