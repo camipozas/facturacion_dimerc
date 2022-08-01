@@ -9,7 +9,7 @@ números de factura, en caso de existir.
 Para la segunda parte, se debe usar una segunda tabla en SAP, la cual también contiene
 partidas abiertas, pero esta vez de deudores. Usando los RUTs y los números de factura
 de la primera parte, se deben realizar calces entre las partidas abiertas:
-
+> Los archivos a utilizar deben ser incorporados en `input` y ser limpiados cada vez que se ejecute.
 - Si se tiene un número de factura, se debe encontrar la partida abierta que tenga ese
 número. Este es un match sencillo, uno-a-uno.
 
@@ -23,3 +23,5 @@ Originalmente ya existía una lógica implementada en SAP para realizar esto. Si
 debido a falta de tiempo, solo se pudo implementar un calce uno-a-uno respecto a los
 RUTs, por lo que se solicita mejorar la propuesta anterior y ver si es posible
 implementar ese calce uno-a-muchos mencionado.
+
+Una vez realizado lo anterior se exportan en `output` los archivos necesarios para subirlos a SAP.
