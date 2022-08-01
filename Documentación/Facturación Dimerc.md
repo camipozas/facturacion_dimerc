@@ -1,27 +1,11 @@
-Descripción detallada:
-Existe una tabla en SAP con información sobre partidas abiertas de cuentas mayores.
-Cada una de estas partidas abiertas tiene una descripción, que podría tener el RUT de
-quien emite el documento, o el número de factura.
+# Descripción detallada
 
-La primera parte del proyecto es analizar esas descripciones y encontrar los RUTs y
-números de factura, en caso de existir.
+Existe una tabla en SAP con información sobre partidas abiertas de cuentas mayores, cada una de estas presenta una descripción, en la cual podría tener RUT, nombre de quien emite el documento, o el número de factura.
 
-Para la segunda parte, se debe usar una segunda tabla en SAP, la cual también contiene
-partidas abiertas, pero esta vez de deudores. Usando los RUTs y los números de factura
-de la primera parte, se deben realizar calces entre las partidas abiertas:
-> Los archivos a utilizar deben ser incorporados en `input` y ser limpiados cada vez que se ejecute.
-- Si se tiene un número de factura, se debe encontrar la partida abierta que tenga ese
-número. Este es un match sencillo, uno-a-uno.
+En donde la primera parte del proyecto consiste en analizar ciertas descripciones, al igual que encontrar el RUT y los números de factura, siempre y cuando estén identificados.
 
-- Si se tiene un RUT, se debe encontrar todas las partidas abiertas asociadas a ese RUT.
-Luego, se debe ver si una de esas partidas puede pagar el monto indicado en la partida
-de la primera tabla, o si todas las partidas juntas lo hacen, o quizás una selección
-específica de estas partidas suma en total ese monto. Este es un match más complejo,
-uno-a-muchos.
+Siguiendo con la segunda parte del proyecto, se emplea una segunda tabla en SAP, la cual contiene partidas abiertas en este caso de deudores, donde se utilizara los RUT y los números de factura de la primera parte del proyecto. A pesar de ello, se deben realizar calces entre las partidas abiertas y el cliente, es decir, los archivos a utilizar deben ser incorporados en una carpeta llamada `input` y ser limpiados cada vez que se ejecute el programa. Luego se identifica el número de factura, siendo como requisito encontrar el match en la partida abierta uno-a-uno.
 
-Originalmente ya existía una lógica implementada en SAP para realizar esto. Sin embargo,
-debido a falta de tiempo, solo se pudo implementar un calce uno-a-uno respecto a los
-RUTs, por lo que se solicita mejorar la propuesta anterior y ver si es posible
-implementar ese calce uno-a-muchos mencionado.
+Si bien, se obtiene un RUT, se debe encontrar todas las partidas abiertas asociadas a ese RUT, a continuación se verifica si una de esas partidas puede pagar el monto indicado en la partida de la primera tabla. Si todas las partidas juntas lo hacen, o una selección específica de estas partidas. la cual suma el total del monto, se identifica un match con mayor complejidad ya que se presenta desde uno-a-muchos.
 
-Una vez realizado lo anterior se exportan en `output` los archivos necesarios para subirlos a SAP.
+En consecuencia, se puede decir que ya existía de una lógica implementada en SAP para la realización del proyecto, sin embargo, debido a la falta de tiempo solo se logro implementa un calce de uno-a-uno respecto a los RUT en donde antes no funcionaba para todo los bancos, por lo que se solicita mejorar la propuesta anterior y ver si es posible la implementación del calce uno-a-muchos mencionado, ya que una vez realizado este procedimiento se exporta en `output` los archivos necesarios para subirlos a la plataforma SAP.
